@@ -1,0 +1,64 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum OrderStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELED
+}
+
+model Product {
+  id          String     @id @default(uuid())
+  name        String
+  description String?
+  price       Decimal    @db.Decimal(12, 2)
+  createdAt   DateTime   @default(now())
+  inventory   Inventory?
+  orders      OrderItem[]
+
+  @@map("products")
+}
+
+model Inventory {
+  id             String   @id @default(uuid())
+  productId      String   @unique
+  product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  totalStock     Int
+  availableStock Int
+  version        Int      @default(0)
+  updatedAt      DateTime @updatedAt
+
+  @@map("inventories")
+}
+
+model Order {
+  id             String      @id @default(uuid())
+  userId         String
+  idempotencyKey String?     @unique
+  totalAmount    Decimal     @db.Decimal(12, 2)
+  status         OrderStatus @default(PENDING)
+  createdAt      DateTime    @default(now())
+  items          OrderItem[]
+
+  @@index([userId])
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  orderId   String
+  productId String
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Decimal  @db.Decimal(12, 2)
+
+  @@map("order_items")
+}
