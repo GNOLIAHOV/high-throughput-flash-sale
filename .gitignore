@@ -24,3 +24,8 @@ Thumbs.db
 # Docker volume/local temp
 postgres_data/
 redis_data/
+
+.agents/
+.claude/
+.cursor/
+.devin/

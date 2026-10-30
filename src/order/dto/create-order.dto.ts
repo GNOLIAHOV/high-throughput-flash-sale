@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsPositive, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID } from 'class-validator';
 
 export class CreateOrderDto {
   @IsString()
@@ -12,4 +12,8 @@ export class CreateOrderDto {
   @IsNumber()
   @IsPositive()
   quantity: number;
+
+  @IsOptional()
+  @IsString()
+  idempotencyKey?: string;
 }

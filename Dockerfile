@@ -23,10 +23,11 @@ ENV NODE_ENV=production
 COPY package*.json ./
 COPY prisma ./prisma/
 
+# Cài đặt chỉ các dependencies cần thiết cho runtime production
 RUN npm install --omit=dev --legacy-peer-deps
+RUN npx prisma generate
 
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
 
 EXPOSE 3000
 

@@ -3,6 +3,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import { BullModule } from '@nestjs/bullmq';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { ProductModule } from './product/product.module';
@@ -16,7 +18,7 @@ import { OrderModule } from './order/order.module';
         {
           name: 'default',
           ttl: 60000, // 60 giây
-          limit: 10,   // Tối đa 10 request
+          limit: 100,  // Mức giới hạn toàn cục hợp lý hơn cho hệ thống
         },
       ],
       storage: new ThrottlerStorageRedisService({
@@ -35,7 +37,9 @@ import { OrderModule } from './order/order.module';
     ProductModule,
     OrderModule,
   ],
+  controllers: [AppController],
   providers: [
+    AppService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
